@@ -1,0 +1,165 @@
+#[S23] 15-112 Quiz 8 Version A
+#####################################################
+
+# CT1 A
+class A:
+    x = 0
+    def __init__(self, x, y):
+        self.x = x 
+        self.y = y
+        A.x += x + y
+
+    def __repr__(self):
+        return f'A({self.x},{self.y})'
+
+    def __eq__(self, other):
+        return isinstance(other, A) and (self.x == other.x) and (self.y == other.y)
+
+    def f(self):
+        self.y += self.x 
+        A.x += self.x
+
+    def g(self):
+        return A(self.x, self.y)
+
+def ct1(x, y):
+    a1 = A(x, y)
+    a2 = a1
+    a2.y = 10 
+    a3 = A(a1.x, 10) 
+    print(a1 == a3) 
+    print(a3.f()) 
+    print(a3.g()) 
+    print([a1, a2, a3, A.x]) 
+    
+ct1(4, 6)
+
+
+'''
+What does the code above print?
+
+True
+None
+A(4, 14)
+[A(4,10), A(4,10), A(4,14), 46]
+
+
+
+
+Write a brief explanation of your mistake here. List each mistake and what 
+tripped you up.
+
+For example:
+- I didn't realize that range is end-exclusive, so I iterated one more time 
+than needed. 
+- ...
+
+If you didn't get far enough on the problem, explain your thought process 
+(briefly) on how you got to your answer. 
+
+ANSWER:
+- I didn't recognize that to compare two instances i have to use
+the __eq__ method. The two instances are true because their x and y values
+are the same
+- I didn't recognize the class attribute as A. Thus, for every new instance
+the x and y value needs to be added together 
+
+
+'''
+
+#####################################################
+
+# FR1: Chapter Class
+
+"""
+Write the Chapter class so that the following test code passes. 
+Make sure to pay attention to the test cases to know whether each test is 
+calling a method or attribute/property! Do not hardcode the test cases, 
+but you may assume that the parameters are always legal.
+
+Hint: You do not need class attributes, inheritance, or hash methods for this class!
+"""
+
+class Chapter:
+    def __init__(self, title, pages):
+        self.title = title
+        self.pages = pages
+    #syntax error - need underscores after repr
+    def __repr__(self):
+        return f'{self.title}:{self.pages} pages'
+    def __eq__(self, other):
+        if not isinstance(other, Chapter):
+            return False
+        return self.title == other.title and self.pages == other.pages
+
+def testChapterClass():
+    chapterA = Chapter('I love CS', 30) # chapter title, # of pages 
+    assert(chapterA.title == 'I love CS') 
+    assert(chapterA.pages == 30) 
+    assert(str(chapterA) == "I love CS: 30 pages") 
+    chapterB = Chapter('So do I', 15) 
+    assert(chapterB.title == 'So do I') 
+    assert(chapterB.pages == 15) 
+    assert(str(chapterB) == "So do I: 15 pages") #Convert chapters in lists properly!
+    assert(str([chapterA, chapterB]) == '[I love CS: 30 pages, So do I: 15 pages]')
+
+    #A chapter is only equal to another chapter with the same title and # pages. 
+    assert(chapterA == Chapter('I love CS', 30)) 
+    assert(chapterA != Chapter('I love CS', 30000)) 
+    assert(chapterA != chapterB) 
+    assert(chapterA != 'I love CS') #Do not crash here!
+    print('Chapter class passed!') 
+    
+testChapterClass()
+
+#####################################################  
+
+# FR2: Book Class
+
+"""
+Write the Book class so that the following test code passes. 
+Note that your Book class will need to use your Chapter class 
+(including some of its methods) in certain places. 
+
+You may use your Chapter class from FR1A. (You do not need to rewrite it here.) 
+Make sure to pay attention to the test cases to know whether each test is 
+calling a method or attribute/property! Do not hardcode the test cases, 
+but you may assume that the parameters are always legal (so, for example, 
+chapter indexes are always in bounds).
+
+Hint: You do not need class attributes, inheritance, or hash methods for this class!
+
+"""
+
+def testBookClass():
+    chapterA = Chapter('I love CS', 30) # chapter title, # of pages 
+    chapterB = Chapter('So do I', 15) 
+    book1 = Book('CS is Fun', [chapterA, chapterB]) # book title, chapters 
+    assert(not isinstance(book1, Chapter)) #Books do NOT inherit from Chapters! 
+    assert(book1.getChapterCount() == 2) 
+    assert(book1.getPageCount() == 45) 
+    assert(book1.getChapter(0) == Chapter('I love CS', 30)) 
+    assert(book1.getChapter(1) == Chapter('So do I', 15)) 
+    assert(str(book1) == 'CS is Fun [I love CS: 30 pages, So do I: 15 pages]')
+
+    #Let's make another book 
+    book2 = Book('The Short Book', [ Chapter('Quick Read', 5) ]) 
+    assert(book2.getChapterCount() == 1) 
+    assert(book2.getPageCount() == 5) 
+    assert(book2.getChapter(0) == Chapter('Quick Read', 5))
+
+    #A book is only equal to another book with the same title and chapter list 
+    assert(book1 != book2) 
+    assert(book1 != 42) #Do not crash here!
+    book3 = Book('CS is Fun', [chapterA, chapterB])
+    assert(book1 == book3)
+
+    #We can add chapters to the end of a book 
+    book3.addChapter('Epilogue', 10) #NOTE: This does not take in a Chapter object 
+    assert(book1 != book3) 
+    assert(str(book3) == 'CS is Fun [I love CS: 30 pages, So do I: 15 pages, Epilogue: 10 pages]') 
+    assert(book3.getChapterCount() == 3) 
+    assert(book3.getPageCount() == 55) 
+    print('Book class passed!') 
+
+testBookClass()

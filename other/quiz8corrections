@@ -1,0 +1,196 @@
+#[S23] 15-112 Quiz 8 Version B
+#####################################################
+
+#####################################################
+
+# CT1 Version B [10 pts]
+
+#Hint: Sets are mutable, so 
+#   what does u = t create?
+# def ct1(L):
+#     s = set()
+#     t = set()
+#     for i in range(len(L)):
+#         if L[i]==i: 
+#             u = s
+#         else:       
+#             u = t
+#         u.add(L[i])
+#     return (u, s, t)
+    
+# for elem in ct1([7, 1, 8, 3, 7]):
+#     print(elem)
+
+'''
+Write a brief explanation of your mistakes here. List each mistake and what tripped you up.
+
+For example:
+- I didn't realize that range is end-exclusive, so I iterated one more time than needed. 
+- ...
+
+If you didn't get far enough on the problem, explain your thought process (briefly) 
+on how you got to your answer. 
+
+ANSWER:
+
+
+
+'''
+
+#####################################################
+
+# FR1 stringMatches [35 pts]
+
+"""
+Write the function stringMatches(L) which takes a list L of non-empty strings and 
+returns a set of all strings in L which can be formed by combining two other strings in L. 
+
+Carefully consider the test cases below, and note that each string in the result must be 
+formed from two strings in L, though those strings may be equivalent. Your function 
+must have an efficiency of O(N**2) or better, where N is the length of the list. 
+
+Less efficient solutions will be eligible for no more than half credit.
+"""
+
+def stringMatches(L):
+    s = set(L)
+    result = set()
+
+    #don't need to worry about set - looping over lists
+    for i in range(len(L)):
+        for j in range(len(L)):
+            if i == j:
+                #cont instead of break
+                continue
+
+            s1, s2 = L[i], L[j]
+            if s1+s2 in s:
+                result.add(s1+s2)
+           
+    return result 
+
+def testStringMatches():
+  print("Testing stringMatches...", end=" ")
+  assert(stringMatches(['a', 'b', 'c', 'bc', 'ca']) == {'ca', 'bc'})
+
+  assert(stringMatches(['car', 'carp', 'speed', 'race', 'y', 'speedy', 'p', 'racecar'])
+                      == {'carp', 'speedy', 'racecar'})
+
+  assert(stringMatches(['marf', 'no', 'matches', 'here']) == set())
+
+  assert(stringMatches(['xo', 'xoxo']) == set()) # Can't use 'xo' twice for 'xoxo'!
+
+  assert(stringMatches(['xoxo', 'xo', 'xo']) == {'xoxo'})
+
+  assert(stringMatches(['a', 'b', 'ab', 'ba']) == {'ab', 'ba'})
+  print("Passed!")
+
+testStringMatches()
+# ^ uncomment to run!
+
+#####################################################  
+
+# FR2: bigramFrequency [35 pts]
+
+"""
+Write the function bigramFrequency(text) which takes a string, text, and returns 
+a dictionary mapping each bigram in the string to its frequency.
+
+Within a text, a bigram is any pair of consecutive words. Frequencies should be 
+floats between 0 and 1, such that all frequencies add up to 1.
+
+Consider the following string:
+"Beth is a student. Jimothy is a student. 42 is a number."
+This contains the following bigrams: 
+
+"beth is", "is a", "a student", "student jimothy", "jimothy is", "student is", "a number"
+
+Notice that "a student" shows up twice and "is a" shows up three times in the string. 
+Notice also that bigrams are lowercase, and they ignore punctuation and digits.
+
+To get the bigram frequency, we recommend the following steps:
+
+First, create a string containing only letters (converted to lowercase) and spaces. 
+So, for the example above, we want:
+
+s = "beth is a student jimothy is a student  is a number"
+
+Now split that string into a list:
+
+L = ["beth", "is", "a", "student", "jimothy", "is", "a", "student", "is", "a", "number"]
+
+Use this list to create a dictionary mapping each bigram to the number of times it appears:
+
+d = {"beth is": 1,
+     "is a": 3,
+     "a student": 2,
+     "student jimothy": 1,
+     "jimothy is": 1,
+     "student is": 1,
+     "a number": 1}
+
+Find the total number of bigrams (in this example we have 10) and use it to return 
+a dictionary of bigram frequencies such that all frequencies add up to 1:
+
+result == {"beth is": 0.1,
+           "is a": 0.3,
+           "a student": 0.2,
+           "student jimothy": 0.1,
+           "jimothy is": 0.1,
+           "student is": 0.1,
+           "a number": 0.1}
+"""
+
+def bigramFrequency(text):
+    s = ''
+    d = dict()
+    sum = 0
+
+    for c in text:
+        if c.isalpha() or c.isspace():
+            c = c.lower()
+            s += c
+
+    L = s.split()
+
+    #loop over bigrams not individ list items
+    for i in range(len(L)-1):
+        bigram = L[i] + ' ' + L[i+1]
+        if bigram not in d:
+            d[bigram] = 1
+        else:
+            d[bigram] += 1
+
+    #after building up counts in dict
+    for bigram in d:
+        sum += d[bigram]
+        
+    for bigram in d:
+        d[bigram] /= sum
+    return d  
+
+def testBigramFrequency():
+    print("Testing bigramFrequency...", end=" ")
+    text = "A cat is a cat is a cat!  Cat5 is a cable... cable is not a cat. "
+    assert(bigramFrequency(text) == {'a cat': 0.25,        # 4/16
+                                    'cat is': 0.1875,     # 3/16
+                                    'is a': 0.1875,       # 3/16
+                                    'cat cat': .0625,     # 1/16
+                                    'a cable': .0625,     # 1/16
+                                    'cable cable': .0625, # 1/16
+                                    'cable is': .0625,    # 1/16
+                                    'is not': .0625,      # 1/16
+                                    'not a': .0625})      # 1/16
+    
+    text = "Beth is a student. Jimothy is a student. 42 is a number."
+    assert(bigramFrequency(text) == {"beth is": 0.1,
+                                     "is a": 0.3,
+                                     "a student": 0.2,
+                                     "student jimothy": 0.1,
+                                     "jimothy is": 0.1,
+                                     "student is": 0.1,
+                                     "a number": 0.1})
+    print("Passed!")
+
+testBigramFrequency()
+# ^ uncomment to run!

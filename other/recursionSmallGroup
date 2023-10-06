@@ -1,0 +1,69 @@
+#Conceptual Review
+
+#General Template
+# def recursiveFn(...):
+#     if base case:
+#         return non-recursive thing
+    
+#     else recursive case:
+#         current = __
+#         rest = __
+#         return combine current with recursiveFn(rest)
+
+#Backtracking Algorithm Template (fancy bruteforcing)
+# def generalBacktrackingAlgo(...):
+#     if solutionState:
+#         return solution
+
+#     else:
+#         current = __
+#         for move in possibleMoves:
+#             if isLegal(move):
+#                 #apps to move
+#                 solution = generalBacktrackingAlgo(...)
+#                 if solution:
+#                     return solution
+#                 #undo move if mutating (don't need if non-mutating)
+#         #give up
+#         return None
+
+#recursiveMatch
+def recursiveMatch(L, M):
+    if L == [] or M == []:
+        return 0
+    else:
+        item1, item2 = L[0], M[0]
+        rest1, rest2 = L[1:], M[1:]
+
+        if item1 == item2:
+            return 1 + recursiveMatch(rest1, rest2)
+        else:
+            return recursiveMatch(rest1, rest2)
+
+#haikuToNapkins
+
+#isIncreasingBishopsTour
+def bishopsHelper(board, currRow, currCol):
+    rows, cols = len(board), len(board[0])
+    #base case
+    if (currRow, currCol) == (0, cols-1):
+        return True
+    
+    else:
+        for drow in [-1, +1]:
+            for dcol in [-1, +1]:
+                tempRow = currRow
+                tempCol = currCol
+                while 0 <= tempRow < rows and 0 <= tempCol < cols:
+                    if board[tempRow][tempCol] > board[currRow][currCol]:
+                        solution = bishopsHelper(board, tempRow, tempCol)
+                        if solution != False:
+                            return True
+                    tempRow += drow
+                    tempCol += dcol
+        return False
+                        
+def isIncreasingBishopsTour(board):
+    #start at top left 
+    return bishopsHelper(board, 0, 0)
+
