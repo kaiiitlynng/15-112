@@ -1,4 +1,3 @@
-## zhuan-112
 ## CMU 15-112 Spring 23 Term Project: Zhuan
 
 ### Project Description
