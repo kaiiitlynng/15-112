@@ -4,6 +4,8 @@
 
 Zhuan is an application built with Python 3 that takes a user’s Spotify data from the last 6 months (by connecting to the user’s Spotify account) and tells the user what their Zodiac animal is. Additionally, they will provided information about their songs’ audio features (acousticness, energy, and valence) and what their 20 most played songs actually are (their “Zodiac” songs). 
 
+Project Video: [https://www.youtube.com/watch?v=Gfo9o-zUwX4&ab_channel=KaitlynNg]
+
 ### How to Run Zhuan
 
 To run the actual application:
